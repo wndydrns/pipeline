@@ -27,14 +27,14 @@ pipeline {
                 println "GRADLE_VERSION = ${GRADLE_VERSION}"
             }
         }
-        
+        /*
         stage('Refresh gradle dependency') {
             steps {
                 // gradle dependency 업데이트
                 bat 'gradlew --refresh-dependencies'
             }
         }
-
+		*/
         stage('Build') {
             steps {
                 bat 'gradlew build'
@@ -43,7 +43,7 @@ pipeline {
 
         stage('Start service') {
             steps {
-                bat 'start java -jar build/libs/pipeline-0.0.1-SNAPSHOT.jar "${DEPLOY_ENV}"'
+                bat "start java -jar build/libs/pipeline-0.0.1-SNAPSHOT.jar ${DEPLOY_ENV}"
             }
         }
     }
