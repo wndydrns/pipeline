@@ -7,6 +7,7 @@ pipeline {
     }
 
     stages {
+                
         stage('Kill previous instance') {
             steps {
                 // 기존 포트(9090)에 떠있는 프로세스를 찾아 taskkill로 죽인다.
@@ -19,6 +20,14 @@ pipeline {
             }
         }
 
+        stage('Kill previous instance') {
+            steps {
+                println "Will deploy to ${DEPLOY_ENV}"
+                println "JAVA_VERSION = ${JAVA_VERSION}"
+                println "GRADLE_VERSION = ${GRADLE_VERSION}"
+            }
+        }
+        
         stage('Refresh gradle dependency') {
             steps {
                 // gradle dependency 업데이트
@@ -34,7 +43,7 @@ pipeline {
 
         stage('Start service') {
             steps {
-                bat 'start java -jar build/libs/pipeline-0.0.1-SNAPSHOT.jar --info'
+                bat 'start java -jar build/libs/pipeline-0.0.1-SNAPSHOT.jar '
             }
         }
     }
