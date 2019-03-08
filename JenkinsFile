@@ -8,12 +8,14 @@ pipeline {
 	
 	
     stages {
-        stage('Target') {
-            steps {
-    			echo "Will deploy to ${DEPLOY_ENV}"
-			    echo "  GRADLE_VERSION = ${GRADLE_VERSION}"
-			    echo "  JAVA_VERSION = ${JAVA_VERSION}"
-    		}
+        stage('Params Check ') {
+    			println "Will deploy to ${DEPLOY_ENV}"
+    			println "JAVA_VERSION = ${JAVA_VERSION}"
+    			println "GRADLE_VERSION = ${GRADLE_VERSION}"
+    			
+    			
+			    env.JAVA_HOME="${tool name : JAVA_VERSION}"
+			    env.PATH="${env.JAVA_HOME}/bin:${env.PATH}"
         }
         stage('Build') {
             steps {
