@@ -17,8 +17,8 @@ pipeline {
     			println "GRADLE_VERSION = ${GRADLE_VERSION}"
     			
     			
-			    env.JAVA_HOME="${tool name : JAVA_VERSION}"
-			    env.PATH="${env.JAVA_HOME}/bin:${env.PATH}"
+			    //env.JAVA_HOME="${tool name : JAVA_VERSION}"
+			    //env.PATH="${env.JAVA_HOME}/bin:${env.PATH}"
 			}
         }
         
