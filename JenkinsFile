@@ -20,7 +20,7 @@ pipeline {
             }
         }
 
-        stage('Kill previous instance') {
+        stage('params') {
             steps {
                 println "Will deploy to ${DEPLOY_ENV}"
                 println "JAVA_VERSION = ${JAVA_VERSION}"
