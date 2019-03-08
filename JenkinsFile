@@ -34,49 +34,8 @@ pipeline {
 
         stage('Start service') {
             steps {
-                bat 'start java -jar build/libs/pipeline-0.0.1-SNAPSHOT.jar'
+                bat 'start java -jar build/libs/pipeline-0.0.1-SNAPSHOT.jar --info'
             }
         }
-        
-        
-		/*
-        stage('Unit test') {
-            steps {
-                bat 'D:\YBM\IDE\bin\gradle-4.10.3\gradlew clean test'
-            }
-        }
-
-        stage('Component test') {
-            steps {
-                bat 'D:\YBM\IDE\bin\gradle-4.10.3\gradlew componentTest'
-            }
-        }
-
-        stage('Contract test') {
-            steps {
-                script {
-                    String currentDirectory = pwd()
-                    try {
-                        bat 'D:\YBM\IDE\bin\gradle-4.10.3\gradlew contractTest'
-                    }
-
-                    catch (err) {
-                        // 실패하는 경우,
-                        bat 'D:\YBM\IDE\bin\gradle-4.10.3\gradlew updateContractTestResult --from=decision --reportPath=\"' + currentDirectory + '\\build\\reports\\tests\\contractTest\\packages\"'
-                        error("Contract Test Failed!")
-                    }
-                }
-            }
-        }
-
-        stage('Upload contract test result') {
-            steps {
-                script {
-                    String currentDirectory = pwd()
-                    bat 'gradlew updateContractTestResult --from=decision --reportPath=\"' + currentDirectory + '\\build\\reports\\tests\\contractTest\\packages\"'
-                }
-            }
-        }
-        */
     }
 }
