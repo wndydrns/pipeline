@@ -43,7 +43,7 @@ pipeline {
 
         stage('Start service') {
             steps {
-                bat 'start java -jar build/libs/pipeline-0.0.1-SNAPSHOT.jar '${DEPLOY_ENV}
+                bat 'start java -jar build/libs/pipeline-0.0.1-SNAPSHOT.jar "${DEPLOY_ENV}"'
             }
         }
     }
