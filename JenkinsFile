@@ -22,7 +22,7 @@ pipeline {
         stage('Refresh gradle dependency') {
             steps {
                 // gradle dependency 업데이트
-                bat 'D:\YBM\IDE\bin\gradle-4.10.3\gradlew --refresh-dependencies'
+                bat 'gradlew --refresh-dependencies'
             }
         }
 
