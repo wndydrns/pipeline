@@ -11,8 +11,8 @@ pipeline {
         stage('Target') {
             steps {
     			echo "Will deploy to ${DEPLOY_ENV}"
-			    echo "  GRADLE_VERSION = $GRADLE_VERSION"
-			    echo "  JAVA_VERSION = $JAVA_VERSION"
+			    echo "  GRADLE_VERSION = ${GRADLE_VERSION}"
+			    echo "  JAVA_VERSION = ${JAVA_VERSION}"
     		}
         }
         stage('Build') {
