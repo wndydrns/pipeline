@@ -5,44 +5,78 @@ pipeline {
     triggers {
         pollSCM('* * * * *')
     }
-	
-    // Get Artifactory server instance, defined in the Artifactory Plugin administration page.
-    //def server = Artifactory.server "SERVER_ID"
-    // Create an Artifactory Gradle instance.
-    def rtGradle = Artifactory.newGradleBuild()
-    def buildInfo
-	
+
     stages {
-        stage('Params Check ') {
+        stage('Kill previous instance') {
             steps {
-    			println "Will deploy to ${DEPLOY_ENV}"
-    			println "JAVA_VERSION = ${JAVA_VERSION}"
-    			println "GRADLE_VERSION = ${GRADLE_VERSION}"
-    			
-    			
-			    //env.JAVA_HOME="${tool name : JAVA_VERSION}"
-			    //env.PATH="${env.JAVA_HOME}/bin:${env.PATH}"
-			}
+                // 기존 포트(9090)에 떠있는 프로세스를 찾아 taskkill로 죽인다.
+                bat 'set PID=0\n' +
+                        'FOR /F \"tokens=5 delims= \" %%P IN (\'netstat -ano ^| findstr :9090\') DO SET /A PID=%%P\n' +
+                        'IF /I \"%PID%\" GEQ \"1\" (\n' +
+                        '    TaskKill /F /PID %PID%\n' +
+                        ')'
+                bat 'ping 127.0.0.1 -n 11 > nul'
+            }
+        }
+
+        stage('Refresh gradle dependency') {
+            steps {
+                // gradle dependency 업데이트
+                bat 'D:\YBM\IDE\bin\gradle-4.10.3\gradlew --refresh-dependencies'
+            }
+        }
+
+        stage('Build') {
+            steps {
+                bat 'D:\YBM\IDE\bin\gradle-4.10.3\gradlew build'
+            }
         }
         
-	    stage('Clone sources') {
-	        git url: 'https://github.com/wndydrns/pipeline.git'
-	    }
+        
+		/*
+        stage('Unit test') {
+            steps {
+                bat 'D:\YBM\IDE\bin\gradle-4.10.3\gradlew clean test'
+            }
+        }
 
-	    stage('Artifactory configuration') {
-	        // Tool name from Jenkins configuration
-	        rtGradle.tool = "gradle-4.10.3"
-	        // Set Artifactory repositories for dependencies resolution and artifacts deployment.
-	        rtGradle.deployer repo:'ext-release-local'	//, server: server
-	        rtGradle.resolver repo:'remote-repos'	//, server: server
-	    }
+        stage('Component test') {
+            steps {
+                bat 'D:\YBM\IDE\bin\gradle-4.10.3\gradlew componentTest'
+            }
+        }
 
-	    stage('Gradle build') {
-	        buildInfo = rtGradle.run rootDir: "pipeline/", buildFile: 'build.gradle', tasks: 'clean artifactoryPublish'
-	    }
+        stage('Contract test') {
+            steps {
+                script {
+                    String currentDirectory = pwd()
+                    try {
+                        bat 'D:\YBM\IDE\bin\gradle-4.10.3\gradlew contractTest'
+                    }
 
-	    stage('Publish build info') {
-	        server.publishBuildInfo buildInfo
-	    }
+                    catch (err) {
+                        // 실패하는 경우,
+                        bat 'D:\YBM\IDE\bin\gradle-4.10.3\gradlew updateContractTestResult --from=decision --reportPath=\"' + currentDirectory + '\\build\\reports\\tests\\contractTest\\packages\"'
+                        error("Contract Test Failed!")
+                    }
+                }
+            }
+        }
+
+        stage('Upload contract test result') {
+            steps {
+                script {
+                    String currentDirectory = pwd()
+                    bat 'gradlew updateContractTestResult --from=decision --reportPath=\"' + currentDirectory + '\\build\\reports\\tests\\contractTest\\packages\"'
+                }
+            }
+        }
+
+        stage('Start service') {
+            steps {
+                bat 'start java -jar build/libs/msa-mountainbook-decision-service-0.0.1-SNAPSHOT.jar'
+            }
+        }
+        */
     }
 }
