@@ -1,7 +1,16 @@
 pipeline {
     agent any
 
+    // SCM trigger 설정
+    triggers {
+        pollSCM('* * * * *')
+    }
+	
+	
     stages {
+        stage('Target') {
+    		echo "Will deploy to ${DEPLOY_ENV}"
+        }
         stage('Build') {
             steps {
                 echo 'Building..'
