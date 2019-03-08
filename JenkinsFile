@@ -9,7 +9,9 @@ pipeline {
 	
     stages {
         stage('Target') {
-    		echo "Will deploy to ${DEPLOY_ENV}"
+            steps {
+    			echo "Will deploy to ${DEPLOY_ENV}"
+    		}
         }
         stage('Build') {
             steps {
