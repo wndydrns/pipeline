@@ -6,8 +6,11 @@ pipeline {
         pollSCM('* * * * *')
     }
 	
-	
-        
+    // Get Artifactory server instance, defined in the Artifactory Plugin administration page.
+    def server = Artifactory.server "SERVER_ID"
+    // Create an Artifactory Gradle instance.
+    def rtGradle = Artifactory.newGradleBuild()
+    def buildInfo
 	
     stages {
         stage('Params Check ') {
@@ -22,22 +25,24 @@ pipeline {
 			}
         }
         
-        stage('Build') {
-            steps {
-                echo 'Building..'
-            }
-        }
-        stage('Deploy') {
-            steps {
-                echo 'Deploying....'
-            }
-        }
-        stage('Run') {
-            steps {
-                echo 'Run....'
-                sh "java -jar scalr-api.jar"
-                sh "${tool name: GRADLE_VERSION, type: 'hudson.plugins.gradle.GradleInstallation'}/bin/gradle test -Dorg.gradle.daemon=true"
-            }
-        }
+	    stage('Clone sources') {
+	        git url: 'https://github.com/wndydrns/pipeline.git'
+	    }
+
+	    stage('Artifactory configuration') {
+	        // Tool name from Jenkins configuration
+	        rtGradle.tool = "gradle-4.10.3"
+	        // Set Artifactory repositories for dependencies resolution and artifacts deployment.
+	        rtGradle.deployer repo:'ext-release-local', server: server
+	        rtGradle.resolver repo:'remote-repos', server: server
+	    }
+
+	    stage('Gradle build') {
+	        buildInfo = rtGradle.run rootDir: "pipeline/", buildFile: 'build.gradle', tasks: 'clean artifactoryPublish'
+	    }
+
+	    stage('Publish build info') {
+	        server.publishBuildInfo buildInfo
+	    }
     }
 }
