@@ -20,6 +20,6 @@ public class JenkinsTestApplication implements CommandLineRunner{
 
     @Override
     public void run(String... args) throws Exception {
-        System.out.println("CommandLineRunner Args: " + Arrays.toString(args));
+    	log.info("CommandLineRunner Args: " + Arrays.toString(args));
     }
 }
