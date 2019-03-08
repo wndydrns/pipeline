@@ -3,7 +3,8 @@ pipeline {
 
     // SCM trigger 설정
     triggers {
-        pollSCM('* * * * *')
+        //pollSCM('* * * * *')
+        cron('* * * * *')
     }
 
     stages {
