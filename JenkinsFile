@@ -28,7 +28,13 @@ pipeline {
 
         stage('Build') {
             steps {
-                bat 'D:\YBM\IDE\bin\gradle-4.10.3\gradlew build'
+                bat 'gradlew build'
+            }
+        }
+
+        stage('Start service') {
+            steps {
+                bat 'start java -jar build/libs/pipeline-0.0.1-SNAPSHOT.jar'
             }
         }
         
@@ -69,12 +75,6 @@ pipeline {
                     String currentDirectory = pwd()
                     bat 'gradlew updateContractTestResult --from=decision --reportPath=\"' + currentDirectory + '\\build\\reports\\tests\\contractTest\\packages\"'
                 }
-            }
-        }
-
-        stage('Start service') {
-            steps {
-                bat 'start java -jar build/libs/msa-mountainbook-decision-service-0.0.1-SNAPSHOT.jar'
             }
         }
         */
