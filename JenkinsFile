@@ -11,6 +11,8 @@ pipeline {
         stage('Target') {
             steps {
     			echo "Will deploy to ${DEPLOY_ENV}"
+			    echo "  GRADLE_VERSION = $GRADLE_VERSION"
+			    echo "  JAVA_VERSION = $JAVA_VERSION"
     		}
         }
         stage('Build') {
@@ -18,14 +20,16 @@ pipeline {
                 echo 'Building..'
             }
         }
-        stage('Test') {
-            steps {
-                echo 'Testing..'
-            }
-        }
         stage('Deploy') {
             steps {
                 echo 'Deploying....'
+            }
+        }
+        stage('Run') {
+            steps {
+                echo 'Run....'
+                sh "java -jar scalr-api.jar"
+                sh "${tool name: GRADLE_VERSION, type: 'hudson.plugins.gradle.GradleInstallation'}/bin/gradle test -Dorg.gradle.daemon=true"
             }
         }
     }
